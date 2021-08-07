@@ -18,7 +18,7 @@ int	set_number_index(t_stack *a, int count, int number)
 	int tmp_count;
 
 	ptr = a;
-	tmp_count = count - 2;
+	tmp_count = count - 1;
 	i = -1;
 	while (++i < count && ptr)
 	{
@@ -29,12 +29,13 @@ int	set_number_index(t_stack *a, int count, int number)
 	return (tmp_count);
 }
 
-void	stack_indexing()
-{
-	
-}
 
-int	*stack_item_markup(int count, t_stack *item, t_stack *head)
+// int	*index_item_markup(int count, t_stack *item, t_stack *head)
+// {
+
+// }
+
+void	number_item_markup(int count, t_stack *item, t_stack *head, int *array)
 {
 	int	*tmp_array;
 	t_stack *ptr_head;
@@ -46,27 +47,37 @@ int	*stack_item_markup(int count, t_stack *item, t_stack *head)
 	ptr_head = head;
 
 	ptr_current = item->next;
-	tmp_array = (int *)malloc(sizeof(int) * count);
-	item_tmp = ptr_current->index;
+	// array = (int *)malloc(sizeof(int) * count);
+	array[0] = 1;
+	item_tmp = item->index;
+	//printf("\n\n%d\n\n", item_tmp);
 	while (ptr_current)
 	{
 		if (item_tmp < ptr_current->index)
 		{
-			tmp_array[i++] = 1;
+			array[++i] = 1;
 			item_tmp = ptr_current->index;
 		}
 		else
-		{
-			tmp_array[i++] = 0;
-		}
+			array[++i] = 0; 
 		ptr_current = ptr_current->next;
 	}
-	// if (ptr_current->index < ptr_head->index)
-	// while (ptr_head != item)
-	// {
-
-	// }
-	return (tmp_array);
+	if (item_tmp < ptr_head->index)
+	{
+		array[++i] = 1;
+		item_tmp = ptr_current->index;
+	}
+	while (ptr_head->number != item->number)
+	{
+		if (item_tmp < ptr_head->index)
+		{
+			array[++i] = 1;
+			item_tmp = ptr_head->index;
+		}
+		else
+			array[++i] = 0; 
+		ptr_head = ptr_head->next;
+	}
 }
 
 // int		count_sorted_items()
@@ -74,38 +85,68 @@ int	*stack_item_markup(int count, t_stack *item, t_stack *head)
 
 // }
 
+int	count_item_true_elements(int *arr)
+{
+
+}
+
+// void	check_least_item_elements()
+
 int	main(int argc, char **argv)
 {
 	t_stack *a;
 	t_stack *ptr;
 	int	i;
+	int	count;
+	int **array;
 
+	i = -1;
+	count = argc - 1;
+	array = (int **)malloc(sizeof(int *) * (count + 1));
+	array[count] = NULL;
+	while (++i < count)
+	{
+		array[i] = (int *)malloc(sizeof(int) * count);
+		//array[i][0] = 1;
+	}
 	i = 1;
 	a = ft_elem_new(ft_atoi(argv[i]), 0);
 	ptr = a;
-	while (++i < argc)
+	while (++i < count)
 		ft_elem_add_back(&ptr, ft_elem_new(ft_atoi(argv[i]), 0));
 	i = -1;
 	while (ptr)
 	{
-		ptr->index = set_number_index(a, argc, ptr->number);
+		write(1, "test\n", 5);
+		ptr->index = set_number_index(a, count, ptr->number);
 		ptr = ptr->next;
 	}
+	write(1, "middle_test\n", 13);
 	ptr = a;
+	i = -1;
 	while (ptr)
 	{
-		printf("number: %d index: %d\n", ptr->number, ptr->index);
+		write(1, "test\n", 5);
+		number_item_markup(count, ptr, a, array[++i]);
 		ptr = ptr->next;
 	}
-	ptr = a;
-	int *array;
-	array = stack_item_markup(argc, ptr->next, a);
+	write(1, "final_test\n", 12);
+	// array = number_item_markup(count, ptr->next, a);
+	//printf("array_index: %d\n", array[0]);
 	//write(1, "test", 4);
 	i = -1;
-	while (array[++i])
+	int j = -1;
+	ptr = a;
+	while (++i < count && ptr)
 	{
-		write(1, "test", 4);
-		printf("array_index: %d\n", array[i]);
+		j = -1;
+		printf("number is: %d\n", ptr->number);
+		while (++j < count)
+		{
+			printf("array_index: %d\n", array[i][j]);
+		}
+		ft_putstr_fd("\n\n\n", 1);
+		ptr = ptr->next;
 	}
 	return (1);
 }
