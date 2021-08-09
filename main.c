@@ -62,11 +62,12 @@ void	number_item_markup(int count, t_stack *item, t_stack *head, int *array)
 			array[++i] = 0; 
 		ptr_current = ptr_current->next;
 	}
-	if (item_tmp < ptr_head->index)
+	if (ptr_current && item_tmp < ptr_head->index)
 	{
 		array[++i] = 1;
 		item_tmp = ptr_current->index;
 	}
+	printf("\ntest_func\n");
 	while (ptr_head->number != item->number)
 	{
 		if (item_tmp < ptr_head->index)
@@ -85,10 +86,35 @@ void	number_item_markup(int count, t_stack *item, t_stack *head, int *array)
 
 // }
 
-int	count_item_true_elements(int *arr)
+int	count_item_true_elements(int **arr, int len)
 {
+	int	i;
+	int j;
+	int	*count;
+	int	tmp;
 
+	i = -1;
+	j = -1;
+	count = (int *)malloc(sizeof(int) * len);
+	while (arr[++i])
+	{
+		j = -1;
+		while(arr[i][++j])
+			if (arr[i][j])
+				count[i]++;
+	}
+	i = 0;
+	tmp = count[i];
+	while (count[++i])
+	{
+		if (count[i] > count[i - 1])
+			tmp = count[i];
+		else
+			count[i] = count[i - 1];
+	}
+	return (tmp);
 }
+
 
 // void	check_least_item_elements()
 
@@ -107,14 +133,16 @@ int	main(int argc, char **argv)
 	while (++i < count)
 	{
 		array[i] = (int *)malloc(sizeof(int) * count);
+		printf("%d\n", i);
 		//array[i][0] = 1;
 	}
 	i = 1;
 	a = ft_elem_new(ft_atoi(argv[i]), 0);
 	ptr = a;
-	while (++i < count)
+	while (++i < argc)
+	{
 		ft_elem_add_back(&ptr, ft_elem_new(ft_atoi(argv[i]), 0));
-	i = -1;
+	}
 	while (ptr)
 	{
 		write(1, "test\n", 5);
@@ -131,6 +159,8 @@ int	main(int argc, char **argv)
 		ptr = ptr->next;
 	}
 	write(1, "final_test\n", 12);
+	int test;
+
 	// array = number_item_markup(count, ptr->next, a);
 	//printf("array_index: %d\n", array[0]);
 	//write(1, "test", 4);
@@ -148,5 +178,7 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("\n\n\n", 1);
 		ptr = ptr->next;
 	}
+	// test = count_item_true_elements(array, count);
+	// printf("max true is: %d\n", test);
 	return (1);
 }
