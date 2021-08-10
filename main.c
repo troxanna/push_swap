@@ -99,9 +99,10 @@ int	count_item_true_elements(int **arr, int len)
 	while (arr[++i])
 	{
 		j = -1;
-		while(arr[i][++j])
+		count[i] = 0;
+		while(++j < len)
 			if (arr[i][j])
-				count[i]++;
+				count[i] = count[i] + 1;
 	}
 	i = 0;
 	tmp = count[i];
@@ -178,7 +179,7 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("\n\n\n", 1);
 		ptr = ptr->next;
 	}
-	// test = count_item_true_elements(array, count);
-	// printf("max true is: %d\n", test);
+	test = count_item_true_elements(array, count);
+	printf("max true is: %d\n", test);
 	return (1);
 }
