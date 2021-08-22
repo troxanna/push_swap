@@ -67,7 +67,6 @@ void	number_item_markup(int count, t_stack *item, t_stack *head, int *array)
 		array[++i] = 1;
 		item_tmp = ptr_current->index;
 	}
-	printf("\ntest_func\n");
 	while (ptr_head->number != item->number)
 	{
 		if (item_tmp < ptr_head->index)
@@ -86,42 +85,109 @@ void	number_item_markup(int count, t_stack *item, t_stack *head, int *array)
 
 // }
 
-int	count_item_true_elements(int **arr, int len)
+int	*count_item_true_elements(int **arr, int len, t_stack *head)
 {
 	int	i;
 	int j;
-	int	*count;
-	int	tmp;
+	int	**count;
+	int	*tmp;
+	t_stack *ptr;
 
 	i = -1;
 	j = -1;
-	count = (int *)malloc(sizeof(int) * len);
-	while (arr[++i])
+	count = (int **)malloc(sizeof(int *) * len + 1);
+	tmp = (int *)malloc(sizeof(int) * 2);
+	count[len] = NULL;
+	ptr = head;
+	while (arr[++i] && ptr)
 	{
 		j = -1;
-		count[i] = 0;
+		count[i] = (int *)malloc(sizeof(int) * 2);
+		count[i][0] = 0;
+		count[i][1] = ptr->number;
 		while(++j < len)
 			if (arr[i][j])
-				count[i] = count[i] + 1;
+				count[i][0] = count[i][0] + 1;
+		ptr = ptr->next;
 	}
 	i = 0;
-	tmp = count[i];
+	tmp[0] = count[i][0];
+	tmp[1] = count[i][1];
 	while (count[++i])
 	{
-		if (count[i] > count[i - 1])
-			tmp = count[i];
+		if (count[i][0] > count[i - 1][0] || (count[i][0] == tmp[0] && count[i][1] < tmp[1]))
+		{
+			tmp[0] = count[i][0];
+			tmp[1] = count[i][1];
+		}
 		else
-			count[i] = count[i - 1];
+			count[i][0] = count[i - 1][0];
 	}
 	return (tmp);
 }
 
+void	fill_in_stack_b(t_stack *a, int index, int *arr, t_stack *b)
+{
+	t_stack	*ptr;
+	int	i;
+
+	ptr = a;
+	i = -1;
+	while (ptr)
+	{
+		if (ptr->index == index)
+			break ;
+		ptr = ptr->next;
+	}
+	while (ptr)
+	{
+		++i;
+		printf("%d\n", arr[i]);
+		if (arr[i] == 0)
+		{
+			printf("%s\n", "ttttest");
+			b = ft_elem_new(ptr->number, ptr->index);
+			ptr = ptr->next;
+			break ;
+		}
+		ptr = ptr->next;
+	}
+	while (ptr)
+	{
+		++i;
+		printf("%d\n", arr[i]);
+		if (!b && arr[i] == 0)
+		{
+			b = ft_elem_new(ptr->number, ptr->index);
+		}
+		else if (arr[i] == 0)
+			ft_elem_add_back(&b, ft_elem_new(ptr->number, ptr->index));
+		ptr = ptr->next;
+	}
+	ptr = a;
+	while (ptr)
+	{
+		++i;
+		printf("%d\n", arr[i]);
+		if (ptr->index == index)
+			break ;
+		if (!b && arr[i] == 0)
+		{
+			b = ft_elem_new(ptr->number, ptr->index);
+		}
+		else if (arr[i] == 0)
+			ft_elem_add_back(&b, ft_elem_new(ptr->number, ptr->index));
+		ptr = ptr->next;
+	}
+	printf("%d\n", b->number);
+}
 
 // void	check_least_item_elements()
 
 int	main(int argc, char **argv)
 {
 	t_stack *a;
+	t_stack *b;
 	t_stack *ptr;
 	int	i;
 	int	count;
@@ -132,39 +198,26 @@ int	main(int argc, char **argv)
 	array = (int **)malloc(sizeof(int *) * (count + 1));
 	array[count] = NULL;
 	while (++i < count)
-	{
 		array[i] = (int *)malloc(sizeof(int) * count);
-		printf("%d\n", i);
-		//array[i][0] = 1;
-	}
 	i = 1;
 	a = ft_elem_new(ft_atoi(argv[i]), 0);
 	ptr = a;
 	while (++i < argc)
-	{
 		ft_elem_add_back(&ptr, ft_elem_new(ft_atoi(argv[i]), 0));
-	}
 	while (ptr)
 	{
-		write(1, "test\n", 5);
 		ptr->index = set_number_index(a, count, ptr->number);
 		ptr = ptr->next;
 	}
-	write(1, "middle_test\n", 13);
 	ptr = a;
 	i = -1;
-	while (ptr)
+	while (ptr && array[++i])
 	{
-		write(1, "test\n", 5);
-		number_item_markup(count, ptr, a, array[++i]);
+		number_item_markup(count, ptr, a, array[i]);
 		ptr = ptr->next;
 	}
-	write(1, "final_test\n", 12);
-	int test;
+	int *result;
 
-	// array = number_item_markup(count, ptr->next, a);
-	//printf("array_index: %d\n", array[0]);
-	//write(1, "test", 4);
 	i = -1;
 	int j = -1;
 	ptr = a;
@@ -179,7 +232,16 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("\n\n\n", 1);
 		ptr = ptr->next;
 	}
-	test = count_item_true_elements(array, count);
-	printf("max true is: %d\n", test);
+	result = count_item_true_elements(array, count, a);
+	printf("max true is: %d, %d\n", result[0], result[1]);
+	fill_in_stack_b(a, result[1], array[result[0]], b);
+	i = -1;
+	ptr = b;
+	while (ptr)
+	{
+		printf("stack b, number is: %d\n", ptr->number);
+		printf("stack b, index is: %d\n", ptr->index);
+		ptr = ptr->next;
+	}
 	return (1);
 }
