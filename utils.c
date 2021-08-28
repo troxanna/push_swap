@@ -1,6 +1,15 @@
 #include "push_swap.h"
 
-t_stack	*ft_elem_new(int number, unsigned int index)
+t_stack	*delete_head(t_stack *root)
+{
+	t_stack		*temp;
+
+	temp = root->next;
+	free(root);
+	return (temp);
+}
+
+t_stack	*ft_item_new(int number, unsigned int index)
 {
 	t_stack	*ptr;
 
@@ -15,7 +24,7 @@ t_stack	*ft_elem_new(int number, unsigned int index)
 	return (NULL);
 }
 
-void	ft_elem_add_back(t_stack **lst, t_stack *new)
+void	ft_item_add_back(t_stack **lst, t_stack *new)
 {
 	t_stack	*ptr;
 
@@ -30,5 +39,14 @@ void	ft_elem_add_back(t_stack **lst, t_stack *new)
 				ptr = ptr->next;
 			ptr->next = new;
 		}
+	}
+}
+
+void	ft_item_add_front(t_stack **lst, t_stack *new)
+{
+	if (lst && new)
+	{
+		new->next = *lst;
+		*lst = new;
 	}
 }

@@ -126,61 +126,6 @@ int	*count_item_true_elements(int **arr, int len, t_stack *head)
 	return (tmp);
 }
 
-void	fill_in_stack_b(t_stack *a, int index, int *arr, t_stack *b)
-{
-	t_stack	*ptr;
-	int	i;
-
-	ptr = a;
-	i = -1;
-	while (ptr)
-	{
-		if (ptr->index == index)
-			break ;
-		ptr = ptr->next;
-	}
-	while (ptr)
-	{
-		++i;
-		printf("%d\n", arr[i]);
-		if (arr[i] == 0)
-		{
-			printf("%s\n", "ttttest");
-			b = ft_elem_new(ptr->number, ptr->index);
-			ptr = ptr->next;
-			break ;
-		}
-		ptr = ptr->next;
-	}
-	while (ptr)
-	{
-		++i;
-		printf("%d\n", arr[i]);
-		if (!b && arr[i] == 0)
-		{
-			b = ft_elem_new(ptr->number, ptr->index);
-		}
-		else if (arr[i] == 0)
-			ft_elem_add_back(&b, ft_elem_new(ptr->number, ptr->index));
-		ptr = ptr->next;
-	}
-	ptr = a;
-	while (ptr)
-	{
-		++i;
-		printf("%d\n", arr[i]);
-		if (ptr->index == index)
-			break ;
-		if (!b && arr[i] == 0)
-		{
-			b = ft_elem_new(ptr->number, ptr->index);
-		}
-		else if (arr[i] == 0)
-			ft_elem_add_back(&b, ft_elem_new(ptr->number, ptr->index));
-		ptr = ptr->next;
-	}
-	printf("%d\n", b->number);
-}
 
 // void	check_least_item_elements()
 
@@ -200,10 +145,10 @@ int	main(int argc, char **argv)
 	while (++i < count)
 		array[i] = (int *)malloc(sizeof(int) * count);
 	i = 1;
-	a = ft_elem_new(ft_atoi(argv[i]), 0);
+	a = ft_item_new(ft_atoi(argv[i]), 0);
 	ptr = a;
 	while (++i < argc)
-		ft_elem_add_back(&ptr, ft_elem_new(ft_atoi(argv[i]), 0));
+		ft_item_add_back(&ptr, ft_item_new(ft_atoi(argv[i]), 0));
 	while (ptr)
 	{
 		ptr->index = set_number_index(a, count, ptr->number);
@@ -234,14 +179,23 @@ int	main(int argc, char **argv)
 	}
 	result = count_item_true_elements(array, count, a);
 	printf("max true is: %d, %d\n", result[0], result[1]);
-	fill_in_stack_b(a, result[1], array[result[0]], b);
-	i = -1;
-	ptr = b;
-	while (ptr)
-	{
-		printf("stack b, number is: %d\n", ptr->number);
-		printf("stack b, index is: %d\n", ptr->index);
-		ptr = ptr->next;
-	}
+	b = ft_item_new(ft_atoi(argv[i]), 0);
+	//printf("\n %d", a->number);
+	////rotate_stack_cmd(&a);
+	//printf("\n %d", a->number);
+	//swap_stack_cmd(&a);
+	//push_stack_cmd(&b, &a);
+	reverse_stack_cmd(&a);
+
+
+	// fill_in_stack_b(a, result[1], array[result[0]], b);
+	// i = -1;
+	// ptr = b;
+	// while (ptr)
+	// {
+	// 	printf("stack b, number is: %d\n", ptr->number);
+	// 	printf("stack b, index is: %d\n", ptr->index);
+	// 	ptr = ptr->next;
+	// }
 	return (1);
 }

@@ -2,7 +2,7 @@ NAME = push_swap
 
 HEAD = push_swap.h
 
-C_FILE = main.c utils.c
+C_FILE = main.c utils.c cmd.c
 
 C_FILE_MAIN = $(C_FILE)
 
