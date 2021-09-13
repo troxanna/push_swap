@@ -30,12 +30,7 @@ int	set_number_index(t_stack *a, int count, int number)
 }
 
 
-// int	*index_item_markup(int count, t_stack *item, t_stack *head)
-// {
-
-// }
-
-void	number_item_markup(int count, t_stack *item, t_stack *head, int *array)
+void	number_item_markup(int count, t_stack *item, t_stack *head)
 {
 	int	*tmp_array;
 	t_stack *ptr_head;
@@ -45,87 +40,109 @@ void	number_item_markup(int count, t_stack *item, t_stack *head, int *array)
 
 	i = 0;
 	ptr_head = head;
-
 	ptr_current = item->next;
 	// array = (int *)malloc(sizeof(int) * count);
-	array[0] = 1;
+	item->flag[0] = 1;
 	item_tmp = item->index;
 	//printf("\n\n%d\n\n", item_tmp);
 	while (ptr_current)
 	{
 		if (item_tmp < ptr_current->index)
 		{
-			array[++i] = 1;
+			item->flag[++i] = 1;
 			item_tmp = ptr_current->index;
 		}
 		else
-			array[++i] = 0; 
+			item->flag[++i] = 0; 
 		ptr_current = ptr_current->next;
 	}
 	if (ptr_current && item_tmp < ptr_head->index)
 	{
-		array[++i] = 1;
+		item->flag[++i] = 1;
 		item_tmp = ptr_current->index;
 	}
 	while (ptr_head->number != item->number)
 	{
 		if (item_tmp < ptr_head->index)
 		{
-			array[++i] = 1;
+			item->flag[++i] = 1;
 			item_tmp = ptr_head->index;
 		}
 		else
-			array[++i] = 0; 
+			item->flag[++i] = 0; 
 		ptr_head = ptr_head->next;
 	}
 }
 
-// int		count_sorted_items()
-// {
-
-// }
-
-int	*count_item_true_elements(int **arr, int len, t_stack *head)
+int	count_item_true_elements(int *arr, int count)
 {
 	int	i;
-	int j;
-	int	**count;
-	int	*tmp;
-	t_stack *ptr;
+	int	tmp;
 
 	i = -1;
-	j = -1;
-	count = (int **)malloc(sizeof(int *) * len + 1);
-	tmp = (int *)malloc(sizeof(int) * 2);
-	count[len] = NULL;
-	ptr = head;
-	while (arr[++i] && ptr)
+	tmp = 0;
+	while (++i < count)
 	{
-		j = -1;
-		count[i] = (int *)malloc(sizeof(int) * 2);
-		count[i][0] = 0;
-		count[i][1] = ptr->number;
-		while(++j < len)
-			if (arr[i][j])
-				count[i][0] = count[i][0] + 1;
-		ptr = ptr->next;
-	}
-	i = 0;
-	tmp[0] = count[i][0];
-	tmp[1] = count[i][1];
-	while (count[++i])
-	{
-		if (count[i][0] > count[i - 1][0] || (count[i][0] == tmp[0] && count[i][1] < tmp[1]))
-		{
-			tmp[0] = count[i][0];
-			tmp[1] = count[i][1];
-		}
-		else
-			count[i][0] = count[i - 1][0];
+		if (arr[i] == 1)
+			tmp++;
 	}
 	return (tmp);
 }
 
+// t_stack	*choose_optimal_stack(t_stack **t, int nb)
+// {
+// 	t_stack	*ptr;
+// 	int		i;
+
+// 	ptr = *t;
+// 	i = 0;
+// 	while (ptr->next)
+// 	{
+// 		if (!ptr->flag[i])
+// 		{
+
+// 		}
+// 	}
+// 	return (ptr);
+// }
+
+t_stack	*push_item_into_stack_b(t_stack *item, t_stack **b, t_stack **head)
+{
+	//пока item != *head
+	//rotate_stack_cmd(t_stack **t)
+	printf("number %d\n", item->number);
+	return (item->next);
+}
+
+//передавать начало стека а
+void	check_stack_a(int len, t_stack **a, t_stack **b, t_stack *head)
+{
+	t_stack	*ptr;
+	int		i;
+
+	ptr = head;
+	i = 0;
+	while (ptr)
+	{
+		if (!head->flag[i])
+			ptr = push_item_into_stack_b(ptr, b);
+		else
+			ptr = ptr->next;
+		i++;
+	}
+	if (head != *a)
+	{
+		ptr = *a;
+		while (ptr != head)
+		{
+			if (!head->flag[i])
+				ptr = push_item_into_stack_b(ptr, b);
+			else
+				ptr = ptr->next;
+			i++;
+		}
+	}
+}
 
 // void	check_least_item_elements()
 
@@ -134,16 +151,17 @@ int	main(int argc, char **argv)
 	t_stack *a;
 	t_stack *b;
 	t_stack *ptr;
+	t_stack *selected_head;
 	int	i;
 	int	count;
 	int **array;
 
 	i = -1;
 	count = argc - 1;
-	array = (int **)malloc(sizeof(int *) * (count + 1));
-	array[count] = NULL;
-	while (++i < count)
-		array[i] = (int *)malloc(sizeof(int) * count);
+	// array = (int **)malloc(sizeof(int *) * (count + 1));
+	// array[count] = NULL;
+	// while (++i < count)
+	// 	array[i] = (int *)malloc(sizeof(int) * count);
 	i = 1;
 	a = ft_item_new(ft_atoi(argv[i]), 0);
 	ptr = a;
@@ -156,45 +174,75 @@ int	main(int argc, char **argv)
 	}
 	ptr = a;
 	i = -1;
-	while (ptr && array[++i])
+	while (ptr)
 	{
-		number_item_markup(count, ptr, a, array[i]);
+		ptr->flag = (int *)malloc(sizeof(int) * count);
+		number_item_markup(count, ptr, a);
 		ptr = ptr->next;
 	}
-	int *result;
-
-	i = -1;
-	int j = -1;
 	ptr = a;
-	while (++i < count && ptr)
+	int	main_result;
+	int	tmp_result;
+	main_result = -1;
+	selected_head = ptr;
+	while (ptr)
 	{
-		j = -1;
-		printf("number is: %d\n", ptr->number);
-		while (++j < count)
+		tmp_result = count_item_true_elements(ptr->flag, count);
+		if (main_result < tmp_result || (main_result == tmp_result && ptr->index < selected_head->index))
 		{
-			printf("array_index: %d\n", array[i][j]);
+			main_result = tmp_result;
+			selected_head = ptr;
 		}
-		ft_putstr_fd("\n\n\n", 1);
 		ptr = ptr->next;
 	}
-	result = count_item_true_elements(array, count, a);
-	printf("max true is: %d, %d\n", result[0], result[1]);
-	b = ft_item_new(ft_atoi(argv[i]), 0);
-	//printf("\n %d", a->number);
-	////rotate_stack_cmd(&a);
-	//printf("\n %d", a->number);
-	//swap_stack_cmd(&a);
+	printf("%d\n", selected_head->number);
+	check_stack_a(count, &a, &b, selected_head);
+	// int *result;
+
+	// i = -1;
+	// int j = -1;
+	// ptr = a;
+	// while (++i < count && ptr)
+	// {
+	// 	j = -1;
+	// 	printf("number is: %d\n", ptr->number);
+	// 	while (++j < count)
+	// 	{
+	// 		printf("array_index: %d\n", array[i][j]);
+	// 	}
+	// 	ft_putstr_fd("\n\n\n", 1);
+	// 	ptr = ptr->next;
+	// }
+	// result = count_item_true_elements(array, count, a);
+	// printf("max true is head with number: %d, count: %d, index: %d\n", result[1], result[0], result[2]);
+	// a = choose_optimal_stack(&a, result[1]);
+	// i = -1;
+	// ptr = a;
+	// while (ptr && array[result[2]][++i] < count)
+	// {
+	// 	if (array[result[2]][i] == 0)
+	// 	{
+	// 		push_item_into_stack_b(count, &a, i);
+	// 	}
+	// }
+	// printf("stack number is: %d\n", a->number);
+	// while (ptr && array[result[2]][++i])
+	// {
+
+	// }
+	//b = ft_item_new(ft_atoi(argv[i]), 0);
+	//if (b)
+		//check_stack(b);
 	//push_stack_cmd(&b, &a);
-	reverse_stack_cmd(&a);
-
-
+	//reverse_rotate_stack_cmd(&a);
 	// fill_in_stack_b(a, result[1], array[result[0]], b);
 	// i = -1;
-	// ptr = b;
+	ptr = selected_head;
+	i = 0;
 	// while (ptr)
 	// {
-	// 	printf("stack b, number is: %d\n", ptr->number);
-	// 	printf("stack b, index is: %d\n", ptr->index);
+	// 	printf("number is: %d, ", ptr->number);
+	// 	printf("index is: %d\n", selected_head->flag[i++]);
 	// 	ptr = ptr->next;
 	// }
 	return (1);
